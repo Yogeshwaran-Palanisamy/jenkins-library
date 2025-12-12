@@ -1,0 +1,35 @@
+name: Deploy self hosted runners
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  deploy-runners:
+    runs-on: ubuntu-latest
+    env:
+      controller-chart: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
+      scale-set-chart: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.12.0
+
+      - name: Install Cert manager
+        run: |  
+          helm install cert-manager oci://quay.io/jetstack/charts/cert-manager --version v1.19.2 --namespace cert-manager --create-namespace --set crds.enabled=true
+
+      - name: Deploy GHA Runner Scale Set Controller
+        working-directory: ./runners
+        run: |
+          helm install -f gha-controller-value.yaml gha-controller ${{ env.controller-chart }}
+
+      - name: Deploy GHA Runner Scale Set
+        working-directory: ./runners  
+        run: |
+          helm install -f gha-scale-set-value.yaml gha-runner ${{ env.scale-set-chart }}
