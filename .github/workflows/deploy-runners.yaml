@@ -21,17 +21,15 @@ jobs:
         with:
           version: v3.12.0
 
-      - name: Configure kubectl
-        uses: azure/setup-kubectl@v3
+      - name: Setup Kubectl
+        uses: Azure/setup-kubectl@v3 
         with:
-          version: 'v1.27.3'
-          kubeconfig: ${{ secrets.kube-config }}
+          version: 'latest'
 
-      - name: Install kubectl cli
-        run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-          kubectl version --client
+      - name: Configure K8s access
+        uses: azure/k8s-set-context@v3
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
 
       - name: Install Cert manager
         run: |  
