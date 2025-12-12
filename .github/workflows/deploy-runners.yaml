@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - users/yogesh/self-hosted-runner
+      
   workflow_dispatch:
 jobs:
   deploy-runners:
@@ -30,6 +31,11 @@ jobs:
         uses: azure/k8s-set-context@v3
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Setup kubeconfig file
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
 
       - name: Install Cert manager
         run: |  
