@@ -8,46 +8,11 @@ on:
   workflow_dispatch:
 jobs:
   deploy-runners:
-    runs-on: ubuntu-latest
-    env:
-      controller-chart: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
-      scale-set-chart: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+    runs-on: actions-runner
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.12.0
-
-      - name: Setup Kubectl
-        uses: Azure/setup-kubectl@v3 
-        with:
-          version: 'latest'
-
-      - name: Configure K8s access
-        uses: azure/k8s-set-context@v3
-        with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-
-      - name: Setup kubeconfig file
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-
-      - name: Install Cert manager
-        run: |  
-          helm install cert-manager oci://quay.io/jetstack/charts/cert-manager --version v1.19.2 --namespace cert-manager --create-namespace --set crds.enabled=true
-
-      - name: Deploy GHA Runner Scale Set Controller
-        working-directory: ./runners
-        run: |
-          helm install -f gha-controller-value.yaml gha-controller ${{ env.controller-chart }}
-
-      - name: Deploy GHA Runner Scale Set
-        working-directory: ./runners  
-        run: |
-          helm install -f gha-scale-set-value.yaml gha-runner ${{ env.scale-set-chart }}
+      - name: Hello World
+        run: echo "Deploying self hosted runners"

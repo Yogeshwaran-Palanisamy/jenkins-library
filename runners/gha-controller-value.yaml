@@ -15,8 +15,8 @@ image:
   tag: ""
 
 imagePullSecrets: []
-nameOverride: "gha-controller"
-fullnameOverride: "gha-controller"
+nameOverride: "actions-controller"
+fullnameOverride: "actions-controller"
 
 env:
 ## Define environment variables for the controller pod
