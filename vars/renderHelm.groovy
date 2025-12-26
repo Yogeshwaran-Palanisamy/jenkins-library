@@ -18,7 +18,7 @@ def call() {
                     chart_name = chart.split("/")[-1]
                 except yaml.YAMLError as exc:
                     print(exc)
-        helm_cmd = f'helm template {name} {chart} --namespace {namespace} --create-namespace --values deploy/{file} --output-dir ./out'
+        helm_cmd = f'helm_cmd = f'helm template {name} {chart} --namespace {namespace} --create-namespace --values deploy/{file} > out/{name}.yaml'
         result = subprocess.run(helm_cmd, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
             print(f"Error running helm command: {result.stderr}")
