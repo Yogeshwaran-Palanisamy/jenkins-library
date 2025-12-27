@@ -1,6 +1,5 @@
 def call() {
-    sh '''
-    #!/bin/python3
+    sh """#!/usr/local/bin/python3
     import os
     import subprocess
     import sys
@@ -24,5 +23,5 @@ def call() {
         if result.returncode != 0:
             print(f"Error running helm command: {result.stderr}")
             sys.exit(1)
-    '''
+    """
 }
