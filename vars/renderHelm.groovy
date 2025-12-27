@@ -6,9 +6,9 @@ import sys
 import yaml
 
 value_file = os.listdir("deploy")
-print(value_file)
 if os.path.exists("out") is False:
     os.mkdir("out")
+
 for file in value_file:
     if file.endswith(".yaml"):
         with open(f"deploy/{file}", 'r') as filename:
