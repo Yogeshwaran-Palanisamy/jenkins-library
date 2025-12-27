@@ -1,5 +1,5 @@
 def call() {
-    sh """#!/usr/local/bin/python3
+    sh """
 import os
 import subprocess
 import sys
