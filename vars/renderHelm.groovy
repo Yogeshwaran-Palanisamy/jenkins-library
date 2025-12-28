@@ -17,10 +17,11 @@ for file in value_file:
                 chart = values["metadata"]["chart"]
                 name = values["metadata"]["name"]
                 namespace = values["metadata"]["namespace"]
+                chartVersion = values["metadata"]["chartVersion"]
                 chart_name = chart.split("/")[-1]
             except yaml.YAMLError as exc:
                 print(exc)
-    helm_cmd = f'helm template {name} {chart} --namespace {namespace} --create-namespace --values deploy/{file} > out/{name}.yaml'
+    helm_cmd = f'helm template {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace --values deploy/{file} > out/{name}.yaml'
     result = subprocess.run(helm_cmd, shell=True, capture_output=True, text=True)
     if result.returncode != 0:
         print(f"Error running helm command: {result.stderr}")
