@@ -20,9 +20,13 @@ for file in value_file:
                 name = values["metadata"]["name"]
                 namespace = values["metadata"]["namespace"]
                 chartVersion = values["metadata"]["chartVersion"]
+                repoUrl = values["metadata"]["repoUrl"] if "repoUrl" in values["metadata"] else None
                 chart_name = chart.split("/")[-1]
             except yaml.YAMLError as exc:
                 print(exc)
+    if repoUrl is not None:
+        helm_repo_cmd = f'helm repo add {name} {repoUrl}'
+        subprocess.run(helm_repo_cmd, shell=True, capture_output=True, text=True)
     if deploy == "true":
         helm_cmd = f'helm upgrade --install {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace --values deploy/{file} --take-ownership'
     else:
