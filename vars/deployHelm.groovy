@@ -40,7 +40,7 @@ for file in value_file:
         helm_cmd = f'helm upgrade --install {name} {chart} --namespace {namespace} --create-namespace {otherOptions}'
     elif deploy == "false" and not directInstallation:
         helm_cmd = f'helm template {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace --values deploy/{file} > out/{name}.yaml'
-    else deploy == "false":
+    elif deploy == "false" and directInstallation:
         helm_cmd = f'helm template {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace {otherOptions} > out/{name}.yaml'
     result = subprocess.run(helm_cmd, shell=True, capture_output=True, text=True)
     print(helm_cmd)
