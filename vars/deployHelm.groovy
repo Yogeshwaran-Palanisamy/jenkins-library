@@ -1,4 +1,4 @@
-def call(deploy = "") {
+def call(deploy = "false") {
 
     sh """#!/usr/local/bin/python3
 import os
@@ -38,8 +38,10 @@ for file in value_file:
         helm_cmd = f'helm upgrade --install {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace --values deploy/{file} --take-ownership'
     elif deploy == "true" and directInstallation:
         helm_cmd = f'helm upgrade --install {name} {chart} --namespace {namespace} --create-namespace {otherOptions}'
-    else:
+    elif deploy == "false" and not directInstallation:
         helm_cmd = f'helm template {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace --values deploy/{file} > out/{name}.yaml'
+    else deploy == "false":
+        helm_cmd = f'helm template {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace {otherOptions} > out/{name}.yaml'
     result = subprocess.run(helm_cmd, shell=True, capture_output=True, text=True)
     print(helm_cmd)
     if result.returncode != 0:
