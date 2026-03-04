@@ -21,14 +21,23 @@ for file in value_file:
                 namespace = values["metadata"]["namespace"]
                 chartVersion = values["metadata"]["chartVersion"]
                 repoUrl = values["metadata"]["repoUrl"] if "repoUrl" in values["metadata"] else None
+                directInstallation = values["metadata"]["directInstallation"] if "directInstallation" in values["metadata"] else False
+                otherOptions = values["metadata"]["otherOptions"] if "otherOptions" in values["metadata"] else ''
+                preInstallation = values["metadata"]["preInstallation"] if "preInstallation" in values["metadata"] else None
                 chart_name = chart.split("/")[-1]
             except yaml.YAMLError as exc:
                 print(exc)
+                
+    if preInstallation:
+        subprocess.run(preInstallation,shell=True,encoding="utf-8")
+    
     if repoUrl is not None:
         helm_repo_cmd = f'helm repo add {name} {repoUrl}'
         subprocess.run(helm_repo_cmd, shell=True, capture_output=True, text=True)
-    if deploy == "true":
+    if deploy == "true" and not directInstallation:
         helm_cmd = f'helm upgrade --install {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace --values deploy/{file} --take-ownership'
+    elif deploy == "true" and directInstallation:
+        helm_cmd = f'helm upgrade --install {name} {chart} --namespace {namespace} --create-namespace {otherOptions}'
     else:
         helm_cmd = f'helm template {name} {chart} --version {chartVersion} --namespace {namespace} --create-namespace --values deploy/{file} > out/{name}.yaml'
     result = subprocess.run(helm_cmd, shell=True, capture_output=True, text=True)
